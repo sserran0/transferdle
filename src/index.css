@@ -1,111 +1,17 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
+:root { color-scheme: dark; --bg:#0b1f14; --panel:#12301f; --line:#1f4a31; --fg:#f2f5ef; --muted:#9db8a6; --accent:#e8ff59; font-family: system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); }
+.app { max-width:480px; margin:0 auto; padding:1rem; display:flex; flex-direction:column; gap:1rem; min-height:100dvh; }
+header { text-align:center; } header h1 { margin:0; font-size:2rem; letter-spacing:-.02em; } header h1 span { color:var(--accent); } header p { margin:.25rem 0 0; color:var(--muted); }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1.25rem; text-align:center; }
+.avatar { width:96px; height:96px; margin:0 auto .75rem; border-radius:50%; background:var(--line); display:grid; place-items:center; font-size:2rem; font-weight:700; color:var(--accent); }
+.name { margin:0 0 1rem; }
+.facts { margin:0; display:grid; grid-template-columns:1fr 1fr; gap:.75rem; text-align:left; }
+.facts dt { font-size:.7rem; text-transform:uppercase; color:var(--muted); } .facts dd { margin:0; font-weight:600; }
+.guess { text-align:center; } .guess-value { display:block; font:700 2.75rem ui-monospace, monospace; color:var(--accent); margin-bottom:.5rem; }
+input[type=range] { width:100%; height:2rem; accent-color:var(--accent); }
+.ticks { display:flex; justify-content:space-between; font-size:.75rem; color:var(--muted); }
+button.primary { background:var(--accent); color:#0b1f14; border:0; border-radius:12px; padding:1rem; font-size:1.1rem; font-weight:700; cursor:pointer; }
+button.primary:focus-visible, input:focus-visible { outline:3px solid #fff; outline-offset:2px; }
+.result { text-align:center; display:flex; flex-direction:column; gap:.5rem; } .actual { font-size:1.25rem; margin:0; }
+footer { margin-top:auto; text-align:center; font-size:.75rem; color:var(--muted); }

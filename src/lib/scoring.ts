@@ -1,37 +1,54 @@
 export const MIN_M = 0.1
 export const MAX_M = 250
-export const MAX_SCORE = 1000
 
-/** Slider position (0..1) -> value in EUR millions, on a log scale. */
-export function sliderToValue(t: number): number {
-  return MIN_M * Math.pow(MAX_M / MIN_M, t)
-}
-
-export function valueToSlider(v: number): number {
-  return Math.log(v / MIN_M) / Math.log(MAX_M / MIN_M)
-}
-
-/** Round to a friendly precision for display/guessing. */
-export function roundGuess(v: number): number {
-  if (v < 1) return Math.round(v * 20) / 20 // 0.05 steps
-  if (v < 10) return Math.round(v * 2) / 2 // 0.5 steps
-  if (v < 50) return Math.round(v)
-  return Math.round(v / 5) * 5
+/**
+ * Parse typed input into EUR millions. Accepts "12", "12.5", "€12M",
+ * "12m", "500k", "1,5". A bare number is millions. Returns null if
+ * unparseable or outside MIN_M..MAX_M.
+ */
+export function parseGuess(raw: string): number | null {
+  const m = raw.trim().toLowerCase().replace(/[€\s]/g, '').replace(',', '.').match(/^(\d+(?:\.\d+)?|\.\d+)([mk])?$/)
+  if (!m) return null
+  const n = parseFloat(m[1]) / (m[2] === 'k' ? 1000 : 1)
+  return n >= MIN_M && n <= MAX_M ? n : null
 }
 
 export function formatValue(m: number): string {
   if (m < 1) return `€${Math.round(m * 1000)}k`
-  return `€${Number.isInteger(m) ? m : m.toFixed(1)}M`
-}
-
-/** 1000 for an exact guess, falling to 0 once off by a factor of 5 or more. */
-export function scoreGuess(guess: number, actual: number): number {
-  const ratioLog = Math.abs(Math.log(guess / actual)) / Math.log(5)
-  return Math.max(0, Math.round(MAX_SCORE * (1 - ratioLog)))
+  return `€${+m.toFixed(2)}M`
 }
 
 export type Direction = 'higher' | 'lower' | 'exact'
 export function direction(guess: number, actual: number): Direction {
   if (guess === actual) return 'exact'
   return guess < actual ? 'higher' : 'lower'
+}
+
+/** A guess within this factor of the true value (±10%) counts as correct. */
+export const TOLERANCE = 0.1
+export function isCorrect(guess: number, actual: number): boolean {
+  return Math.abs(Math.log(guess / actual)) <= Math.log(1 + TOLERANCE)
+}
+
+/** Absolute miss (EUR millions) at or under which a wrong guess is yellow. */
+export const YELLOW_WITHIN_M = 15
+/** Absolute miss (EUR millions) over which a guess is red. */
+export const RED_BEYOND_M = 25
+
+export type Feedback = 'green' | 'yellow' | 'orange' | 'red'
+
+/**
+ * green: correct; yellow: within €15M; red: more than €25M away.
+ * The €15-25M gap was unspecified, so it gets its own orange tier.
+ */
+export function feedback(guess: number, actual: number): Feedback {
+  if (isCorrect(guess, actual)) return 'green'
+  const miss = Math.abs(guess - actual)
+  if (miss > RED_BEYOND_M) return 'red'
+  if (miss <= YELLOW_WITHIN_M) return 'yellow'
+  return 'orange'
+}
+
+export const FEEDBACK_EMOJI: Record<Feedback, string> = {
+  green: '🟩', yellow: '🟨', orange: '🟧', red: '🟥',
 }

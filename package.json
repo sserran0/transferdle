@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "data": "node scripts/build-players.ts",
+    "images": "node scripts/build-images.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

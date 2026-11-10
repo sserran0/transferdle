@@ -3,15 +3,16 @@ import { PLAYERS } from './data/players'
 import { PlayerCard } from './components/PlayerCard'
 import { GuessBoard } from './components/GuessBoard'
 import { Results } from './components/Results'
-import { dailyPlayer, gameReducer, gameStatus, newGame } from './lib/game'
+import { dailyPlayer, gameReducer, gameStatus, newGame, pickPlayer } from './lib/game'
 import { parseGuess } from './lib/scoring'
 import { dateKey } from './lib/seed'
 import { recordResult } from './lib/stats'
 import { loadGuesses, loadStats, saveGuesses, saveStats } from './lib/storage'
 
 // Fixed for the life of the page. A tab left open overnight shows yesterday's
-// puzzle until reloaded.
-const TODAY = dateKey()
+// puzzle until reloaded. In dev only, ?date=YYYY-MM-DD overrides it so you can
+// test daily rollover and streaks.
+const TODAY = (import.meta.env.DEV && new URLSearchParams(location.search).get('date')) || dateKey()
 
 export default function App() {
   const [game, dispatch] = useReducer(gameReducer, undefined, () =>
@@ -46,6 +47,14 @@ export default function App() {
     dispatch({ type: 'guess', value })
   }
 
+  // Dev only: replay with a fresh random player and no waiting. Stats are not
+  // re-recorded for a date that already counted.
+  function devReplay() {
+    setText('')
+    setError(null)
+    dispatch({ type: 'reset', player: pickPlayer(PLAYERS) })
+  }
+
   return (
     <main className="app">
       <header>
@@ -61,7 +70,10 @@ export default function App() {
       />
 
       {over && <Results date={TODAY} player={player} guesses={guesses} won={status === 'won'} stats={stats} />}
-      <footer>Sample data only — values are approximate.</footer>
+      {import.meta.env.DEV && (
+        <button type="button" className="dev" onClick={devReplay}>Dev: replay with random player</button>
+      )}
+      <footer>Market values from transfermarkt-datasets (CC0). Approximate.</footer>
     </main>
   )
 }

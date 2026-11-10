@@ -39,3 +39,7 @@ footer { margin-top:auto; text-align:center; font-size:.75rem; color:var(--muted
 .histogram li > span:first-child { width:1rem; font-family:ui-monospace, monospace; }
 .bar { background:var(--line); padding:.15rem .5rem; border-radius:.3rem; font:600 .85rem ui-monospace, monospace; text-align:right; }
 .bar.today { background:#4caf50; color:#10140f; }
+.dev { background:transparent; color:var(--muted); border:1px dashed var(--muted); border-radius:8px; padding:.5rem; cursor:pointer; }
+.avatar.photo { display:block; object-fit:cover; object-position:top; background:var(--line); }
+.credit { margin:.75rem 0 0; font-size:.7rem; color:var(--muted); }
+.credit a { color:inherit; }

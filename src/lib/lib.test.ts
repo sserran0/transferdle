@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { PLAYERS } from '../data/players'
-import { dailyPlayer } from './game'
+import { dailyPlayer, tierForDate } from './game'
 import { feedback, parseGuess } from './scoring'
 import { dateKey, previousDateKey } from './seed'
 import { buildShareText } from './share'
@@ -18,6 +18,20 @@ describe('daily seed', () => {
     expect(previousDateKey('2026-03-01')).toBe('2026-02-28')
     expect(previousDateKey('2027-01-01')).toBe('2026-12-31')
     expect(dateKey(new Date(2026, 0, 5))).toBe('2026-01-05')
+  })
+})
+
+describe('daily pool', () => {
+  const days = (n: number) => Array.from({ length: n }, (_, i) => dateKey(new Date(2026, 10, 10 + i)))
+  it('matches the weekday tier', () => {
+    for (const d of days(14)) expect(dailyPlayer(PLAYERS, d).tier).toBe(tierForDate(d))
+  })
+  it('never repeats a player within a year', () => {
+    const ids = days(365).map((d) => dailyPlayer(PLAYERS, d).id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+  it('is stable across calls', () => {
+    expect(dailyPlayer(PLAYERS, '2027-03-14').id).toBe(dailyPlayer([...PLAYERS].reverse(), '2027-03-14').id)
   })
 })
 

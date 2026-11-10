@@ -1,21 +1,39 @@
-import { useReducer, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { PLAYERS } from './data/players'
 import { PlayerCard } from './components/PlayerCard'
 import { GuessBoard } from './components/GuessBoard'
 import { Results } from './components/Results'
-import { gameReducer, gameStatus, newGame, pickPlayer } from './lib/game'
+import { dailyPlayer, gameReducer, gameStatus, newGame } from './lib/game'
 import { parseGuess } from './lib/scoring'
+import { dateKey } from './lib/seed'
+import { recordResult } from './lib/stats'
+import { loadGuesses, loadStats, saveGuesses, saveStats } from './lib/storage'
 
-const freshGame = () => newGame(pickPlayer(PLAYERS))
+// Fixed for the life of the page. A tab left open overnight shows yesterday's
+// puzzle until reloaded.
+const TODAY = dateKey()
 
 export default function App() {
-  const [game, dispatch] = useReducer(gameReducer, undefined, freshGame)
+  const [game, dispatch] = useReducer(gameReducer, undefined, () =>
+    newGame(dailyPlayer(PLAYERS, TODAY), loadGuesses(TODAY)))
+  const [stats, setStats] = useState(loadStats)
   const [text, setText] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   const status = gameStatus(game)
   const { player, guesses } = game
   const over = status !== 'playing'
+
+  useEffect(() => { saveGuesses(TODAY, guesses) }, [guesses])
+
+  // recordResult ignores a date it has already recorded, so refreshes and
+  // StrictMode's double effect can't double-count.
+  useEffect(() => {
+    if (!over) return
+    const next = recordResult(loadStats(), TODAY, status === 'won', guesses.length)
+    saveStats(next)
+    setStats(next)
+  }, [over, status, guesses.length])
 
   function submit() {
     const value = parseGuess(text)
@@ -28,17 +46,11 @@ export default function App() {
     dispatch({ type: 'guess', value })
   }
 
-  function restart() {
-    dispatch({ type: 'restart', player: pickPlayer(PLAYERS) })
-    setText('')
-    setError(null)
-  }
-
   return (
     <main className="app">
       <header>
         <h1>Transfer<span>dle</span></h1>
-        <p>Guess the Transfermarkt value in €M</p>
+        <p>Daily puzzle · {TODAY}</p>
       </header>
 
       <PlayerCard player={player} showName />
@@ -48,7 +60,7 @@ export default function App() {
         onText={(v) => { setText(v); setError(null) }} onSubmit={submit}
       />
 
-      {over && <Results player={player} guesses={guesses} won={status === 'won'} onRestart={restart} />}
+      {over && <Results date={TODAY} player={player} guesses={guesses} won={status === 'won'} stats={stats} />}
       <footer>Sample data only — values are approximate.</footer>
     </main>
   )

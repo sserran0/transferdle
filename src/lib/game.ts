@@ -1,4 +1,5 @@
 import type { Player } from '../types'
+import { hashString, seededRng } from './seed'
 import { isCorrect } from './scoring'
 
 export const MAX_GUESSES = 5
@@ -10,22 +11,23 @@ export interface GameState {
   guesses: number[]
 }
 
-export type GameAction =
-  | { type: 'guess'; value: number }
-  | { type: 'restart'; player: Player }
+export type GameAction = { type: 'guess'; value: number }
 
 export type GameStatus = 'playing' | 'won' | 'lost'
 
-/**
- * Pick one player. `rng` is injectable so v2 can swap in a seeded
- * generator for the daily puzzle.
- */
+/** Pick one player using `rng` (defaults to Math.random, for free play). */
 export function pickPlayer(pool: Player[], rng: () => number = Math.random): Player {
   return pool[Math.floor(rng() * pool.length)]
 }
 
-export function newGame(player: Player): GameState {
-  return { player, guesses: [] }
+/** Everyone gets the same player on the same date. Sorted so pool order can't change the answer. */
+export function dailyPlayer(pool: Player[], date: string): Player {
+  const sorted = [...pool].sort((a, b) => a.id.localeCompare(b.id))
+  return pickPlayer(sorted, seededRng(hashString(date)))
+}
+
+export function newGame(player: Player, guesses: number[] = []): GameState {
+  return { player, guesses }
 }
 
 export function gameStatus(s: GameState): GameStatus {
@@ -35,10 +37,5 @@ export function gameStatus(s: GameState): GameStatus {
 }
 
 export function gameReducer(s: GameState, a: GameAction): GameState {
-  switch (a.type) {
-    case 'guess':
-      return gameStatus(s) === 'playing' ? { ...s, guesses: [...s.guesses, a.value] } : s
-    case 'restart':
-      return newGame(a.player)
-  }
+  return gameStatus(s) === 'playing' ? { ...s, guesses: [...s.guesses, a.value] } : s
 }

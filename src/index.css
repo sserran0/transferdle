@@ -28,3 +28,14 @@ footer { margin-top:auto; text-align:center; font-size:.75rem; color:var(--muted
 .cell.fb-green { background:#4caf50; } .cell.fb-yellow { background:#f2c94c; } .cell.fb-orange { background:#f2994a; } .cell.fb-red { background:#e5534b; }
 .arrow { padding:0 1rem; font-size:1.5rem; font-weight:700; }
 .error { min-height:1.25rem; margin:0; color:#ff8a80; font-size:.85rem; text-align:center; }
+
+.notice { min-height:1.25rem; margin:0; font-size:.85rem; color:var(--muted); }
+.countdown { color:var(--muted); margin:0; }
+.stats { text-align:left; }
+.stat-row { display:grid; grid-template-columns:repeat(4,1fr); text-align:center; margin:0 0 .75rem; }
+.stat-row dd { margin:0; font:700 1.5rem ui-monospace, monospace; } .stat-row dt { font-size:.7rem; text-transform:uppercase; color:var(--muted); }
+.histogram { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.3rem; }
+.histogram li { display:flex; align-items:center; gap:.5rem; }
+.histogram li > span:first-child { width:1rem; font-family:ui-monospace, monospace; }
+.bar { background:var(--line); padding:.15rem .5rem; border-radius:.3rem; font:600 .85rem ui-monospace, monospace; text-align:right; }
+.bar.today { background:#4caf50; color:#10140f; }

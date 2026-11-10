@@ -1,56 +1,54 @@
-import { useMemo, useState } from 'react'
+import { useReducer, useState } from 'react'
 import { PLAYERS } from './data/players'
 import { PlayerCard } from './components/PlayerCard'
-import {
-  direction, formatValue, roundGuess, scoreGuess, sliderToValue, valueToSlider,
-} from './lib/scoring'
+import { GuessBoard } from './components/GuessBoard'
+import { Results } from './components/Results'
+import { gameReducer, gameStatus, newGame, pickPlayer } from './lib/game'
+import { parseGuess } from './lib/scoring'
 
-function pickPlayer() {
-  return PLAYERS[Math.floor(Math.random() * PLAYERS.length)]
-}
+const freshGame = () => newGame(pickPlayer(PLAYERS))
 
 export default function App() {
-  const [player, setPlayer] = useState(pickPlayer)
-  const [t, setT] = useState(valueToSlider(10))
-  const [locked, setLocked] = useState(false)
+  const [game, dispatch] = useReducer(gameReducer, undefined, freshGame)
+  const [text, setText] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
-  const guess = useMemo(() => roundGuess(sliderToValue(t)), [t])
-  const score = locked ? scoreGuess(guess, player.valueM) : 0
-  const dir = locked ? direction(guess, player.valueM) : null
+  const status = gameStatus(game)
+  const { player, guesses } = game
+  const over = status !== 'playing'
 
-  function next() {
-    setPlayer(pickPlayer())
-    setT(valueToSlider(10))
-    setLocked(false)
+  function submit() {
+    const value = parseGuess(text)
+    if (value === null) {
+      setError('Enter a value between €100k and €250M, e.g. 45 or 500k')
+      return
+    }
+    setError(null)
+    setText('')
+    dispatch({ type: 'guess', value })
+  }
+
+  function restart() {
+    dispatch({ type: 'restart', player: pickPlayer(PLAYERS) })
+    setText('')
+    setError(null)
   }
 
   return (
     <main className="app">
-      <header><h1>Transfer<span>dle</span></h1><p>Guess the Transfermarkt value</p></header>
+      <header>
+        <h1>Transfer<span>dle</span></h1>
+        <p>Guess the Transfermarkt value in €M</p>
+      </header>
 
-      <PlayerCard player={player} showName={locked} />
+      <PlayerCard player={player} showName />
 
-      <div className="guess">
-        <output className="guess-value" aria-live="polite">{formatValue(guess)}</output>
-        <input
-          type="range" min={0} max={1} step={0.001} value={t}
-          disabled={locked} aria-label="Your value guess"
-          onChange={(e) => setT(Number(e.target.value))}
-        />
-        <div className="ticks"><span>€100k</span><span>€1M</span><span>€10M</span><span>€100M</span></div>
-      </div>
+      <GuessBoard
+        player={player} guesses={guesses} text={text} error={error} over={over}
+        onText={(v) => { setText(v); setError(null) }} onSubmit={submit}
+      />
 
-      {!locked ? (
-        <button className="primary" onClick={() => setLocked(true)}>Lock in guess</button>
-      ) : (
-        <div className="result" role="status">
-          <p className="actual">Actual value: <strong>{formatValue(player.valueM)}</strong></p>
-          <p>
-            {dir === 'exact' ? 'Spot on!' : dir === 'higher' ? '⬆ Too low' : '⬇ Too high'} · <strong>{score}</strong> / 1000
-          </p>
-          <button className="primary" onClick={next}>Next player</button>
-        </div>
-      )}
+      {over && <Results player={player} guesses={guesses} won={status === 'won'} onRestart={restart} />}
       <footer>Sample data only — values are approximate.</footer>
     </main>
   )

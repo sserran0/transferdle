@@ -7,8 +7,11 @@ export interface Player {
   nationality: string
   nationalityFlag: string
   club: string
-  clubCountry: string
-  clubCountryFlag: string
+  league: string
+  /** Flag of the league's country. */
+  leagueFlag: string
+  /** YYYY-MM-DD; use ageOn() for display. */
+  dateOfBirth: string
   /** Transfermarkt market value in EUR millions (transfermarkt-datasets, CC0) */
   valueM: number
   /** Difficulty tier, ranked by value as a proxy for recognisability. */

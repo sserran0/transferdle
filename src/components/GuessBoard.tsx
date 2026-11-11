@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { Player } from '../types'
 import { MAX_GUESSES } from '../lib/game'
-import { direction, feedback, formatValue } from '../lib/scoring'
+import { MAX_M, MIN_M, direction, feedback, formatValue } from '../lib/scoring'
 
 interface Props {
   player: Player
@@ -47,15 +47,19 @@ export function GuessBoard({ player, guesses, text, error, over, onText, onSubmi
               onChange={(e) => onText(e.target.value)}
               inputMode="decimal"
               autoComplete="off"
-              placeholder={active ? 'Value in €M, e.g. 45' : ''}
+              placeholder={active ? `Value in €M (${MIN_M} - ${MAX_M})` : ''}
               aria-label={`Guess ${i + 1}`}
               aria-invalid={active && error ? true : undefined}
             />
           </div>
         )
       })}
-      <p className="error" role="alert">{error ?? ''}</p>
-      {!over && <button className="primary" type="submit">Lock in guess</button>}
+      {!over && (
+        <>
+          <button className="primary" type="submit">Lock in guess</button>
+          <p className="error" role="alert">{error ?? ''}</p>
+        </>
+      )}
     </form>
   )
 }

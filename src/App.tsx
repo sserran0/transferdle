@@ -1,10 +1,11 @@
 import { useEffect, useReducer, useState } from 'react'
 import { PLAYERS } from './data/players'
+import { PitchBackground } from './components/PitchBackground'
 import { PlayerCard } from './components/PlayerCard'
 import { GuessBoard } from './components/GuessBoard'
 import { Results } from './components/Results'
-import { dailyPlayer, gameReducer, gameStatus, newGame, pickPlayer } from './lib/game'
-import { parseGuess } from './lib/scoring'
+import { dailyPlayer, gameReducer, gameStatus, isDuplicateGuess, newGame, pickPlayer } from './lib/game'
+import { MAX_M, MIN_M, formatValue, parseGuess } from './lib/scoring'
 import { dateKey } from './lib/seed'
 import { recordResult } from './lib/stats'
 import { loadGuesses, loadStats, saveGuesses, saveStats } from './lib/storage'
@@ -39,7 +40,11 @@ export default function App() {
   function submit() {
     const value = parseGuess(text)
     if (value === null) {
-      setError('Enter a value between €100k and €250M, e.g. 45 or 500k')
+      setError(`Enter a value between ${formatValue(MIN_M)} and ${formatValue(MAX_M)}, e.g. 45 or 500k`)
+      return
+    }
+    if (isDuplicateGuess(guesses, value)) {
+      setError(`You already guessed ${formatValue(value)}. Try a different value.`)
       return
     }
     setError(null)
@@ -56,13 +61,15 @@ export default function App() {
   }
 
   return (
+    <>
+    <PitchBackground />
     <main className="app">
       <header>
         <h1>Transfer<span>dle</span></h1>
         <p>Daily puzzle · {TODAY}</p>
       </header>
 
-      <PlayerCard player={player} showName />
+      <PlayerCard player={player} showName today={TODAY} />
 
       <GuessBoard
         player={player} guesses={guesses} text={text} error={error} over={over}
@@ -75,5 +82,6 @@ export default function App() {
       )}
       <footer>Market values from transfermarkt-datasets (CC0). Approximate.</footer>
     </main>
+    </>
   )
 }

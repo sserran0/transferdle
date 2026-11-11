@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { PLAYERS } from '../data/players'
-import { dailyPlayer, tierForDate } from './game'
+import { dailyPlayer, gameReducer, isDuplicateGuess, newGame, tierForDate } from './game'
 import { feedback, parseGuess } from './scoring'
 import { dateKey, previousDateKey } from './seed'
+import { ageOn } from './age'
+import { GRASS_A, GRASS_B, LINE, pitchGrid } from './pitch'
 import { buildShareText } from './share'
 import { emptyStats, recordResult } from './stats'
 
@@ -32,6 +34,28 @@ describe('daily pool', () => {
   })
   it('is stable across calls', () => {
     expect(dailyPlayer(PLAYERS, '2027-03-14').id).toBe(dailyPlayer([...PLAYERS].reverse(), '2027-03-14').id)
+  })
+})
+
+describe('duplicate guesses', () => {
+  it('detects the same displayed value', () => {
+    expect(isDuplicateGuess([12, 30], 12.001)).toBe(true)
+    expect(isDuplicateGuess([12, 30], 12.5)).toBe(false)
+  })
+  it('reducer ignores a repeated guess', () => {
+    const s0 = newGame(PLAYERS[0])
+    const s1 = gameReducer(s0, { type: 'guess', value: 12 })
+    expect(gameReducer(s1, { type: 'guess', value: 12 })).toBe(s1)
+    expect(gameReducer(s1, { type: 'guess', value: 13 }).guesses).toEqual([12, 13])
+  })
+})
+
+describe('ageOn', () => {
+  it('counts whole years and handles birthdays', () => {
+    expect(ageOn('2000-07-21', '2026-07-20')).toBe(25)
+    expect(ageOn('2000-07-21', '2026-07-21')).toBe(26)
+    expect(ageOn('2000-12-31', '2027-01-01')).toBe(26)
+    expect(ageOn('2004-02-29', '2026-02-28')).toBe(21)
   })
 })
 
@@ -70,5 +94,27 @@ describe('scoring and share', () => {
   it('builds spoiler-free share text', () => {
     const t = buildShareText('2026-11-09', [112, 100], 100, true)
     expect(t).toBe('Transferdle 2026-11-09 2/5\n🟨🟩')
+  })
+})
+
+describe('pitchGrid', () => {
+  const cols = 60, rows = 100
+  const g = pitchGrid(cols, rows)
+  const at = (x: number, y: number) => g[y * cols + x]
+  it('has one cell per grid position, using only known values', () => {
+    expect(g.length).toBe(cols * rows)
+    expect(new Set(g)).toEqual(new Set([GRASS_A, GRASS_B, LINE]))
+  })
+  it('draws the halfway line across the middle between the touchlines', () => {
+    const y = Math.floor(rows / 2)
+    for (let x = 2; x <= cols - 3; x++) expect(at(x, y)).toBe(LINE)
+    expect(at(0, y)).not.toBe(LINE)
+  })
+  it('alternates mowing stripes', () => {
+    expect(at(0, 0)).toBe(GRASS_A)
+    expect(at(0, 6)).toBe(GRASS_B)
+  })
+  it('survives tiny viewports', () => {
+    expect(() => pitchGrid(5, 5)).not.toThrow()
   })
 })

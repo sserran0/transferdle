@@ -16,7 +16,7 @@ export function PlayerCard({ player, showName, today }: { player: Player; showNa
       <div className="card-head">
         {photo ? (
           <img
-            className="avatar photo" src={photo} width={64} height={64}
+            className="avatar photo" src={photo} width={72} height={72}
             alt={showName ? `Photo of ${player.name}` : 'Mystery player'}
             referrerPolicy="no-referrer" onError={() => setFailedUrl(photo)}
           />

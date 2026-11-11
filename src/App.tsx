@@ -66,7 +66,7 @@ export default function App() {
     <main className="app">
       <header>
         <h1>Transfer<span>dle</span></h1>
-        <p>Daily puzzle · {TODAY}</p>
+        <p>Daily Puzzle · {TODAY}</p>
       </header>
 
       <PlayerCard player={player} showName today={TODAY} />
@@ -80,7 +80,11 @@ export default function App() {
       {import.meta.env.DEV && (
         <button type="button" className="dev" onClick={devReplay}>Dev: replay with random player</button>
       )}
-      <footer>Market values from transfermarkt-datasets (CC0). Approximate.</footer>
+      <footer>
+        Market values from{' '}
+        <a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a>{' '}
+        (Approximate)
+      </footer>
     </main>
     </>
   )

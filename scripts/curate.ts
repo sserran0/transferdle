@@ -8,8 +8,11 @@ export interface PoolPlayer {
   nationality: string
   nationalityFlag: string
   club: string
-  clubCountry: string
-  clubCountryFlag: string
+  league: string
+  /** Flag of the league's country. */
+  leagueFlag: string
+  /** YYYY-MM-DD. The app computes age from this so it never goes stale. */
+  dateOfBirth: string
   valueM: number
   tier: Tier
   /** Intentionally unset: see README "Images". Filled by a future licensed source. */
@@ -45,7 +48,12 @@ export function parseCsv(text: string): Row[] {
   return body.map((r) => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ''])))
 }
 
-export const LEAGUES = ['GB1', 'ES1', 'IT1', 'L1', 'FR1', 'NL1', 'PO1']
+/** Transfermarkt competition id -> display name. Also defines the supported leagues. */
+export const LEAGUE_NAMES: Record<string, string> = {
+  GB1: 'Premier League', ES1: 'La Liga', IT1: 'Serie A', L1: 'Bundesliga',
+  FR1: 'Ligue 1', NL1: 'Eredivisie', PO1: 'Liga Portugal',
+}
+export const LEAGUES = Object.keys(LEAGUE_NAMES)
 
 export interface CurateOptions {
   leagues?: string[]
@@ -83,6 +91,7 @@ export function curate(players: Row[], competitions: Row[], opts: CurateOptions 
       Number(p.last_season) === season &&
       leagues.includes(p.current_club_domestic_competition_id) &&
       Number(p.market_value_in_eur) >= minValueM * 1e6 &&
+      /^\d{4}-\d{2}-\d{2}/.test(p.date_of_birth) &&
       p.current_club_name && (p.sub_position || p.position))
     .sort((a, b) =>
       Number(b.market_value_in_eur) - Number(a.market_value_in_eur) ||
@@ -105,8 +114,9 @@ export function curate(players: Row[], competitions: Row[], opts: CurateOptions 
       nationality: displayCountry(p.country_of_citizenship),
       nationalityFlag: natFlag,
       club: p.current_club_name,
-      clubCountry: displayCountry(clubCountry),
-      clubCountryFlag: clubFlag,
+      league: LEAGUE_NAMES[p.current_club_domestic_competition_id],
+      leagueFlag: clubFlag,
+      dateOfBirth: p.date_of_birth.slice(0, 10),
       valueM: Math.round(Number(p.market_value_in_eur) / 1e4) / 100,
       tier: tierForRank(rank, candidates.length, tierCutoffs),
     }

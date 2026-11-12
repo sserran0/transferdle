@@ -75,7 +75,14 @@ export function gameStatus(s: GameState): GameStatus {
   return s.guesses.length >= MAX_GUESSES ? 'lost' : 'playing'
 }
 
+/** Same value as displayed (two decimals), so 12.001 and 12 count as the same guess. */
+export function isDuplicateGuess(guesses: number[], value: number): boolean {
+  const key = (n: number) => Math.round(n * 100)
+  return guesses.some((g) => key(g) === key(value))
+}
+
 export function gameReducer(s: GameState, a: GameAction): GameState {
   if (a.type === 'reset') return newGame(a.player)
-  return gameStatus(s) === 'playing' ? { ...s, guesses: [...s.guesses, a.value] } : s
+  if (gameStatus(s) !== 'playing' || isDuplicateGuess(s.guesses, a.value)) return s
+  return { ...s, guesses: [...s.guesses, a.value] }
 }

@@ -118,8 +118,7 @@ export default function App() {
         <button type="button" className="dev" onClick={devReplay}>Dev: replay with random player</button>
       )}
       <footer>
-        <a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a> (CC0)
-        Source:<a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a>
+        Estimated market value (source: <a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a>)
       </footer>
       <HowToPlayDialog open={panel === 'help'} onClose={closePanel} />
       <AboutDialog open={panel === 'about'} onClose={closePanel} />

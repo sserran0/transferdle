@@ -98,7 +98,11 @@ export default function App() {
         <button type="button" className="dev" onClick={devReplay}>Dev: replay with random player</button>
       )}
       <footer>
+<<<<<<< Updated upstream
         <a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a> (CC0)
+=======
+        Source:<a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a>
+>>>>>>> Stashed changes
       </footer>
     </main>
     </>

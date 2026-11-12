@@ -1,0 +1,18 @@
+# Fails (and GitHub emails you) when fewer than 14 puzzle days are left.
+# Fix: npm run schedule, then open a PR with the new days.
+name: Schedule runway
+
+on:
+  schedule:
+    - cron: '17 15 * * 1' # Mondays, 15:17 UTC
+  workflow_dispatch:
+
+jobs:
+  runway:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node scripts/check-schedule.ts --min-runway 14

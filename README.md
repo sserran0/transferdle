@@ -22,8 +22,22 @@ npm run data -- --from-dir <dir>      # use local players.csv + competitions.csv
 - **Source:** [transfermarkt-datasets](https://github.com/dcaribou/transfermarkt-datasets) (CC0). The game never contacts Transfermarkt.
 - **Curation** (`scripts/curate.ts`): players active in the latest season in the Premier League, La Liga, Serie A, Bundesliga, Ligue 1, Eredivisie and Primeira Liga, valued at €1M or more, top 1,000 by value.
 - **Tiers:** by value rank, as a proxy for recognisability: top 25% easy, next 40% medium, rest hard.
-- **Daily pick** (`dailyPlayer` in `src/lib/game.ts`): difficulty ramps through the week (Mon–Tue easy, Wed–Fri medium, Sat–Sun hard). Each tier is shuffled with a fixed seed and used in order, so no player repeats until the tier is exhausted.
-- **Regenerating the pool reshuffles upcoming days**, including today's. Regenerate deliberately, ideally right after midnight, not mid-day.
+- **Rotation** (`dailyPlayer` in `src/lib/game.ts`): difficulty ramps through the week (Mon–Tue easy, Wed–Fri medium, Sat–Sun hard). Each tier is shuffled with a fixed seed and used in order, so no player repeats until the tier is exhausted.
+
+## Puzzle schedule
+
+Live puzzles come from `src/data/schedule.json`, not from the rotation directly. Each day stores a frozen copy of its player (value, club, etc.; photos are merged in by id), so **regenerating `players.json` never changes a day that's already scheduled.**
+
+```sh
+npm run schedule                 # append days up to 60 days from today
+npm run schedule -- --days 90
+npm run schedule:check           # validate (CI also checks it's append-only)
+```
+
+- New days use the rotation's pick, or a seeded same-tier fallback if that player appeared in the last 365 days (`src/lib/schedule.ts`).
+- CI fails any PR that edits or removes an existing day. To fix a bad puzzle, change it deliberately and explain why in the PR.
+- The `Schedule runway` workflow runs weekly and fails when fewer than 14 days are left, so GitHub emails you before it runs out. If it does run out, the app falls back to the rotation and logs a warning.
+- Typical refresh: `npm run data && npm run images && npm run schedule`, then open a PR.
 
 ## Images
 

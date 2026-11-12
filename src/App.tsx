@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useState } from 'react'
 import { PLAYERS } from './data/players'
+import { scheduledPlayer } from './data/schedule'
 import { PitchBackground } from './components/PitchBackground'
 import { PlayerCard } from './components/PlayerCard'
 import { GuessBoard } from './components/GuessBoard'
@@ -15,9 +16,19 @@ import { loadGuesses, loadStats, saveGuesses, saveStats } from './lib/storage'
 // test daily rollover and streaks.
 const TODAY = (import.meta.env.DEV && new URLSearchParams(location.search).get('date')) || dateKey()
 
+// The schedule is the source of truth for live puzzles. Falling back to the
+// rotation keeps the game playable if the schedule runs out, but players could
+// then see a different puzzle after the next data refresh, so CI alerts first.
+function todaysPlayer() {
+  const scheduled = scheduledPlayer(TODAY)
+  if (scheduled) return scheduled
+  console.warn(`No scheduled puzzle for ${TODAY}; using the rotation. Run: npm run schedule`)
+  return dailyPlayer(PLAYERS, TODAY)
+}
+
 export default function App() {
   const [game, dispatch] = useReducer(gameReducer, undefined, () =>
-    newGame(dailyPlayer(PLAYERS, TODAY), loadGuesses(TODAY)))
+    newGame(todaysPlayer(), loadGuesses(TODAY)))
   const [stats, setStats] = useState(loadStats)
   const [text, setText] = useState('')
   const [error, setError] = useState<string | null>(null)

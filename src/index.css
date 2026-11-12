@@ -1,5 +1,7 @@
 :root {
-  color-scheme: light;
+  /* "only" tells browsers with forced or auto dark modes (Chrome Android,
+     Samsung Internet, Opera) not to recolor the page. */
+  color-scheme: only light;
   --ink: #14210f;
   --paper: #f6f1da;
   --paper-dark: #ded7b4;

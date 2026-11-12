@@ -12,7 +12,8 @@
     "data": "node scripts/build-players.ts",
     "images": "node scripts/build-images.ts",
     "schedule": "node scripts/build-schedule.ts",
-    "schedule:check": "node scripts/check-schedule.ts"
+    "schedule:check": "node scripts/check-schedule.ts",
+    "og": "node scripts/build-og.ts"
   },
   "dependencies": {
     "@fontsource/press-start-2p": "^5.3.0",
@@ -20,6 +21,7 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "^1.1.1",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

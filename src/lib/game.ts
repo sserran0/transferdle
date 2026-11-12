@@ -1,6 +1,6 @@
-import type { Player, Tier } from '../types'
-import { dateKey, hashString, seededRng } from './seed'
-import { isCorrect } from './scoring'
+import type { Player, Tier } from '../types.ts'
+import { dateKey, hashString, seededRng } from './seed.ts'
+import { isCorrect } from './scoring.ts'
 
 export const MAX_GUESSES = 5
 
@@ -53,7 +53,7 @@ function shuffled<T>(items: T[], rng: () => number): T[] {
 export function dailyPlayer(pool: Player[], date: string): Player {
   const tier = tierForDate(date)
   const tierPool = pool.filter((p) => p.tier === tier)
-  const candidates = (tierPool.length ? tierPool : pool).sort((a, b) => a.id.localeCompare(b.id))
+  const candidates = [...(tierPool.length ? tierPool : pool)].sort((a, b) => a.id.localeCompare(b.id))
 
   // How many earlier days since launch had this tier? That is this day's slot.
   let slot = 0

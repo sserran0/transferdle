@@ -1,9 +1,9 @@
 import type { Stats } from '../lib/stats'
 
-export function StatsPanel({ stats, todaysGuessCount, won }: { stats: Stats; todaysGuessCount: number; won: boolean }) {
+export function StatsPanel({ stats, today }: { stats: Stats; today?: { guesses: number; won: boolean } }) {
   const max = Math.max(1, ...stats.distribution)
   const pct = stats.played ? Math.round((stats.won / stats.played) * 100) : 0
-  const highlight = won ? todaysGuessCount - 1 : stats.distribution.length - 1
+  const highlight = !today ? -1 : today.won ? today.guesses - 1 : stats.distribution.length - 1
   return (
     <section className="stats" aria-label="Statistics">
       <dl className="stat-row">

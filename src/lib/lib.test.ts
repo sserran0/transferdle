@@ -5,6 +5,7 @@ import { feedback, parseGuess } from './scoring'
 import { dateKey, previousDateKey } from './seed'
 import { ageOn } from './age'
 import { GRASS_A, GRASS_B, LINE, pitchGrid } from './pitch'
+import { shouldShowHelp } from './help'
 import { buildShareText } from './share'
 import { emptyStats, recordResult } from './stats'
 
@@ -47,6 +48,18 @@ describe('duplicate guesses', () => {
     const s1 = gameReducer(s0, { type: 'guess', value: 12 })
     expect(gameReducer(s1, { type: 'guess', value: 12 })).toBe(s1)
     expect(gameReducer(s1, { type: 'guess', value: 13 }).guesses).toEqual([12, 13])
+  })
+})
+
+describe('first-visit help', () => {
+  const none = emptyStats()
+  it('shows for a brand-new visitor only', () => {
+    expect(shouldShowHelp(false, none, [])).toBe(true)
+    expect(shouldShowHelp(true, none, [])).toBe(false)
+  })
+  it('skips existing players', () => {
+    expect(shouldShowHelp(false, recordResult(none, '2026-11-09', true, 3), [])).toBe(false)
+    expect(shouldShowHelp(false, none, [12])).toBe(false)
   })
 })
 

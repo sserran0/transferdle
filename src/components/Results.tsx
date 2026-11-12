@@ -54,7 +54,7 @@ export function Results({ date, player, guesses, won, stats }: Props) {
       <p className="grid" aria-label="Guess summary">{grid}</p>
       <button className="primary" onClick={share}>Share</button>
       <p className="notice" aria-live="polite">{notice}</p>
-      <StatsPanel stats={stats} todaysGuessCount={guesses.length} won={won} />
+      <StatsPanel stats={stats} today={{ guesses: guesses.length, won }} />
       <p className="countdown">Next player in <strong>{countdown}</strong></p>
     </section>
   )

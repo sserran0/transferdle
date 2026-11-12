@@ -30,7 +30,7 @@ button, input { font:inherit; color:inherit; }
               var(--px) var(--px) 0 var(--ink);
 }
 
-header { text-align:center; }
+header { position:relative; text-align:center; }
 header h1 { margin:0; font-size:20px; line-height:1.3; color:var(--accent); text-shadow: -3px -3px 0 var(--ink), 0px -3px 0 var(--ink), 3px -3px 0 var(--ink), -3px 0px 0 var(--ink), 3px 0px 0 var(--ink), -3px 3px 0 var(--ink), 0px 3px 0 var(--ink), 3px 3px 0 var(--ink), 6px 6px 0 var(--ink); }
 header h1 span { color:#fff; }
 header p { margin:.25rem 0 0; color:#fff; text-shadow:2px 2px 0 var(--ink); }
@@ -86,10 +86,39 @@ button.primary:focus-visible, input:focus-visible, .credit a:focus-visible { out
 .bar { background:#fff; border:2px solid var(--ink); padding:.25rem .5rem; text-align:right; font-size:8px; }
 .bar.today { background:var(--green); }
 
-footer { margin-top:auto; align-self:flex-start; font-size:10px; line-height:1.7; color:var(--ink); white-space:nowrap; }
+footer { margin-top:auto; align-self:flex-start; font-size:10px; line-height:1.7; color:var(--ink); }
 footer a { color:inherit; }
 footer a:focus-visible { outline:var(--px) solid var(--ink); outline-offset:2px; }
 /* Wide screens have an empty left gutter: pin the line to the screen's bottom-left corner,
    just inside the pitch's touchline. Narrower screens keep it at the bottom of the page. */
-@media (min-width: 1000px) { footer { position:fixed; left:2rem; bottom:2rem; margin:0; } }
+@media (min-width: 1000px) { footer { position:fixed; left:2rem; bottom:2rem; margin:0; white-space:nowrap; } }
 .dev { background:var(--paper-dark); padding:.5rem; font-size:8px; cursor:pointer; }
+
+/* Header buttons: how to play, about, stats. Absolute so the header keeps its height. */
+.hb { position:absolute; top:0; display:flex; gap:6px; }
+.hb-left { left:0; } .hb-right { right:0; }
+.icon-btn { width:28px; height:28px; padding:0; display:grid; place-items:center; background:var(--paper); border:3px solid var(--ink); border-radius:0; font-size:12px; line-height:1; cursor:pointer; box-shadow:2px 2px 0 var(--ink); }
+.icon-btn:hover { background:var(--accent); }
+.icon-btn:active { transform:translate(2px, 2px); box-shadow:none; }
+.icon-btn:focus-visible, .modal a:focus-visible { outline:var(--px) solid var(--ink); outline-offset:2px; }
+
+/* Modals (native <dialog>): same 8-bit box as the cards. */
+.modal { padding:0; width:min(440px, 92vw); max-height:88dvh; overflow:auto; background:var(--paper); color:var(--ink); border:var(--px) solid var(--ink); border-radius:0; box-shadow:var(--px) var(--px) 0 var(--ink); font-size:10px; line-height:2; }
+.modal::backdrop { background:rgba(20, 33, 15, .65); }
+.modal-body { padding:1rem; display:flex; flex-direction:column; gap:.75rem; }
+.modal-head { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+.modal h2 { margin:0; font-size:14px; line-height:1.4; }
+.modal h3 { margin:0; font-size:10px; color:var(--muted); }
+.modal p, .modal ul { margin:0; }
+.modal section { display:flex; flex-direction:column; gap:.25rem; }
+.modal a { color:inherit; }
+.modal-sub { color:var(--muted); }
+.fine { font-size:8px; color:var(--muted); }
+.plain { list-style:none; padding:0; display:flex; flex-direction:column; gap:.5rem; }
+.legend { list-style:none; padding:0; display:flex; flex-direction:column; gap:.5rem; }
+.legend li { display:flex; align-items:center; gap:.75rem; }
+.swatch { flex:none; width:20px; height:20px; border:3px solid var(--ink); }
+.swatch.fb-green { background:var(--green); } .swatch.fb-yellow { background:var(--yellow); }
+.swatch.fb-orange { background:var(--orange); } .swatch.fb-red { background:var(--red); }
+.modal .stats { box-shadow:none; }
+body:has(dialog[open]) { overflow:hidden; }

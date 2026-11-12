@@ -85,6 +85,8 @@ button.primary:focus-visible, input:focus-visible, .credit a:focus-visible { out
 .bar.today { background:var(--green); }
 
 footer { margin-top:auto; align-self:flex-start; font-size:10px; line-height:1.7; color:var(--ink); }
+footer p { margin:0; }
+.byline { margin-top:.25rem; font-size:8px; }
 footer a { color:inherit; }
 footer a:focus-visible { outline:var(--px) solid var(--ink); outline-offset:2px; }
 /* Wide screens have an empty left gutter: pin the line to the screen's bottom-left corner,

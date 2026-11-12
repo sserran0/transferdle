@@ -34,7 +34,7 @@ export function GuessBoard({ player, guesses, text, error, over, onText, onSubmi
           return (
             <div key={i} className={`cell fb-${fb}`}>
               <input readOnly tabIndex={-1} value={formatValue(g)} aria-label={`Guess ${i + 1}: ${formatValue(g)}. ${hint}`} />
-              <span className="arrow" aria-hidden="true">{fb === 'green' ? '✓' : d === 'higher' ? '⬆' : '⬇'}</span>
+              <span className={`arrow${fb === 'green' ? ' check' : ''}`} aria-hidden="true">{fb === 'green' ? '\u2714\uFE0E' : d === 'higher' ? '⬆' : '⬇'}</span>
             </div>
           )
         }

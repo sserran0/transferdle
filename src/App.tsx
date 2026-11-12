@@ -81,9 +81,7 @@ export default function App() {
         <button type="button" className="dev" onClick={devReplay}>Dev: replay with random player</button>
       )}
       <footer>
-        Market values from{' '}
-        <a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a>{' '}
-        (Approximate)
+        <a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a> (CC0)
       </footer>
     </main>
     </>

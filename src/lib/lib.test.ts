@@ -6,6 +6,7 @@ import { dateKey, previousDateKey } from './seed'
 import { ageOn } from './age'
 import { GRASS_A, GRASS_B, LINE, pitchGrid } from './pitch'
 import { shouldShowHelp } from './help'
+import { ARROW_DOWN, ARROW_UP, BLOCK, CHECK, pixelPath, pixmapSize } from './pixelart'
 import { buildShareText } from './share'
 import { emptyStats, recordResult } from './stats'
 
@@ -60,6 +61,35 @@ describe('first-visit help', () => {
   it('skips existing players', () => {
     expect(shouldShowHelp(false, recordResult(none, '2026-11-09', true, 3), [])).toBe(false)
     expect(shouldShowHelp(false, none, [12])).toBe(false)
+  })
+})
+
+describe('pixel art', () => {
+  it('has rectangular sprites', () => {
+    for (const map of [ARROW_UP, ARROW_DOWN, CHECK, BLOCK]) {
+      const { w } = pixmapSize(map)
+      expect(map.every((row) => row.length === w)).toBe(true)
+    }
+  })
+  it('draws the down arrow as the up arrow flipped, and both symmetric', () => {
+    expect(ARROW_DOWN).toEqual([...ARROW_UP].reverse())
+    for (const row of ARROW_UP) expect(row).toBe([...row].reverse().join(''))
+  })
+  it('gives the attempt block an ink outline with chamfered corners', () => {
+    const { w, h } = pixmapSize(BLOCK)
+    expect(BLOCK[0][0]).toBe('.')
+    expect(BLOCK[h - 1][w - 1]).toBe('.')
+    expect(BLOCK[5][0]).toBe('#')
+    expect(BLOCK[5][w - 1]).toBe('#')
+  })
+  it('draws a check bolder than a one-pixel stroke', () => {
+    const filled = (m: readonly string[]) => m.join('').split('#').length - 1
+    expect(filled(CHECK)).toBeGreaterThan(24)
+  })
+  it('turns pixels into one path rectangle per run', () => {
+    expect(pixelPath(['.##', '#..'])).toBe('M1 0h2v1h-2zM0 1h1v1h-1z')
+    expect(pixelPath(['...'])).toBe('')
+    expect(pixelPath(['ab.a'], 'ab')).toBe('M0 0h2v1h-2zM3 0h1v1h-1z') // several characters count as one shape
   })
 })
 

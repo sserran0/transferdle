@@ -5,7 +5,8 @@ import { msUntilNextDay } from '../lib/seed'
 import { trackEvent } from '../lib/analytics'
 import { buildShareText } from '../lib/share'
 import type { Stats } from '../lib/stats'
-import { FEEDBACK_EMOJI, feedback, formatValue } from '../lib/scoring'
+import { feedback, formatValue } from '../lib/scoring'
+import { AttemptBlocks } from './PixelArt'
 import { StatsPanel } from './StatsPanel'
 
 interface Props {
@@ -30,7 +31,7 @@ function useCountdown() {
 export function Results({ date, player, guesses, won, stats }: Props) {
   const [notice, setNotice] = useState('')
   const countdown = useCountdown()
-  const grid = guesses.map((g) => FEEDBACK_EMOJI[feedback(g, player.valueM)]).join('')
+  const feedbacks = guesses.map((g) => feedback(g, player.valueM))
 
   async function share() {
     trackEvent({ name: 'share_clicked' })
@@ -51,7 +52,7 @@ export function Results({ date, player, guesses, won, stats }: Props) {
     <section className="result" role="status" aria-label="Results">
       <h2>{won ? `Solved in ${guesses.length} / ${MAX_GUESSES}` : 'Out of guesses'}</h2>
       <p className="actual">{player.name}: <strong>{formatValue(player.valueM)}</strong></p>
-      <p className="grid" aria-label="Guess summary">{grid}</p>
+      <AttemptBlocks feedbacks={feedbacks} />
       <button className="primary" onClick={share}>Share</button>
       <p className="notice" aria-live="polite">{notice}</p>
       <StatsPanel stats={stats} today={{ guesses: guesses.length, won }} />

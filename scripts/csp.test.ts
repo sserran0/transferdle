@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8')
 const config = JSON.parse(read('../vercel.json')) as { headers: { source: string; headers: { key: string; value: string }[] }[] }
 
-// Report-only first; once production is clean it is renamed to Content-Security-Policy.
+// Enforced as Content-Security-Policy; the report-only name is still accepted so the check works while debugging.
 const header = config.headers
   .find((h) => h.source === '/(.*)')
   ?.headers.find((h) => /^Content-Security-Policy(-Report-Only)?$/.test(h.key))

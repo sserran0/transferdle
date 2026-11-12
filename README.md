@@ -91,13 +91,19 @@ If you change what the game collects, update the privacy text in `AboutDialog`.
 ## Security headers
 
 `vercel.json` sets `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and a **Content-Security-Policy**.
-The policy is currently `Content-Security-Policy-Report-Only`: the browser logs anything it *would* block (DevTools console, `[Report Only] ...`) but blocks nothing.
+The policy is **enforced** (`Content-Security-Policy`): the browser blocks anything it doesn't allow, and logs `Refused to load ...` in the DevTools console. It was first rolled out as `Content-Security-Policy-Report-Only` to catch problems before enforcing.
 
-- **Enforce it:** once production shows no violations, rename the key to `Content-Security-Policy`. (`upgrade-insecure-requests` is ignored in report-only mode; it only takes effect once enforced.)
-- **Expected false alarm on Vercel previews:** Vercel's preview toolbar loads from `vercel.live` and will be flagged. It doesn't exist in production.
+- **If something stops loading in production:** check the console for `Refused to load ...` and add the missing source to the policy. To debug without breaking users, temporarily rename the key back to `Content-Security-Policy-Report-Only`.
+- **Expected on Vercel previews:** Vercel's preview toolbar loads from `vercel.live` and is blocked there. It doesn't exist in production, so ignore it.
 - **Keep it in sync, in the same PR as the change:**
   - a new image host goes in `img-src` (`scripts/csp.test.ts` fails if a photo host in `images.json` isn't allowed)
   - a backend on another domain goes in `connect-src` (same-domain Vercel functions are covered by `'self'`)
   - Vercel Analytics runs from our own domain, so `'self'` already covers it
 - **No `data:` assets:** `build.assetsInlineLimit` is `0` in `vite.config.ts`, because Vite would otherwise inline small fonts as `data:` URIs, which `font-src 'self'` rejects.
 - **No inline styles or scripts:** keep CSS in files and don't add inline `<script>` tags. Styles set from React's `style` prop are fine.
+
+## Pixel art
+
+The up/down arrows, the correct-answer check and the coloured attempt blocks are drawn as pixel art, not font glyphs or emoji, so they look identical on every device (iOS in particular swaps `⬆` for a coloured emoji and uses its own emoji squares).
+Sprites are plain character grids in `src/lib/pixelart.ts` and render as inline SVG via `src/components/PixelArt.tsx`. To change one, edit its grid.
+The attempt blocks use the same colours as the guess boxes (`--green`, `--yellow`, `--orange`, `--red`). The share text (`src/lib/share.ts`) still uses emoji squares, because pasted text can't carry drawn graphics.

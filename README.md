@@ -91,10 +91,10 @@ If you change what the game collects, update the privacy text in `AboutDialog`.
 ## Security headers
 
 `vercel.json` sets `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and a **Content-Security-Policy**.
-The policy is **enforced** (`Content-Security-Policy`): the browser blocks anything it doesn't allow, and logs `Refused to load ...` in the DevTools console. It was first rolled out as `Content-Security-Policy-Report-Only` to catch problems before enforcing.
+The policy is currently `Content-Security-Policy-Report-Only`: the browser logs anything it *would* block (DevTools console, `[Report Only] ...`) but blocks nothing.
 
-- **If something stops loading in production:** check the console for `Refused to load ...` and add the missing source to the policy. To debug without breaking users, temporarily rename the key back to `Content-Security-Policy-Report-Only`.
-- **Expected on Vercel previews:** Vercel's preview toolbar loads from `vercel.live` and is now blocked there. It doesn't exist in production, so ignore it.
+- **Enforce it:** once production shows no violations, rename the key to `Content-Security-Policy`. (`upgrade-insecure-requests` is ignored in report-only mode; it only takes effect once enforced.)
+- **Expected false alarm on Vercel previews:** Vercel's preview toolbar loads from `vercel.live` and will be flagged. It doesn't exist in production.
 - **Keep it in sync, in the same PR as the change:**
   - a new image host goes in `img-src` (`scripts/csp.test.ts` fails if a photo host in `images.json` isn't allowed)
   - a backend on another domain goes in `connect-src` (same-domain Vercel functions are covered by `'self'`)

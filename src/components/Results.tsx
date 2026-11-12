@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Player } from '../types'
 import { MAX_GUESSES } from '../lib/game'
 import { msUntilNextDay } from '../lib/seed'
+import { trackEvent } from '../lib/analytics'
 import { buildShareText } from '../lib/share'
 import type { Stats } from '../lib/stats'
 import { FEEDBACK_EMOJI, feedback, formatValue } from '../lib/scoring'
@@ -32,6 +33,7 @@ export function Results({ date, player, guesses, won, stats }: Props) {
   const grid = guesses.map((g) => FEEDBACK_EMOJI[feedback(g, player.valueM)]).join('')
 
   async function share() {
+    trackEvent({ name: 'share_clicked' })
     const text = buildShareText(date, guesses, player.valueM, won, window.location.origin + window.location.pathname)
     try {
       if (navigator.share) {

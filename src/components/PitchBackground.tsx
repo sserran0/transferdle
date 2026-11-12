@@ -19,9 +19,10 @@ export function PitchBackground() {
     if (!canvas || !ctx) return
 
     let frame = 0
+    let cols = 0, rows = 0
     const paint = () => {
-      const cols = Math.ceil(window.innerWidth / CELL)
-      const rows = Math.ceil(window.innerHeight / CELL)
+      cols = Math.ceil(window.innerWidth / CELL)
+      rows = Math.ceil(window.innerHeight / CELL)
       canvas.width = cols
       canvas.height = rows
       const grid = pitchGrid(cols, rows)
@@ -33,6 +34,11 @@ export function PitchBackground() {
       ctx.putImageData(img, 0, 0)
     }
     const onResize = () => {
+      // Phone browsers resize the viewport by ~100px as the address bar slides
+      // in and out while scrolling. Ignore a height-only change that small so the
+      // lines don't jump; a rotation or window resize still redraws.
+      const sameWidth = Math.ceil(window.innerWidth / CELL) === cols
+      if (sameWidth && Math.abs(Math.ceil(window.innerHeight / CELL) - rows) * CELL < 120) return
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(paint)
     }

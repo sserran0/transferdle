@@ -114,6 +114,30 @@ describe('pitchGrid', () => {
     expect(at(0, 0)).toBe(GRASS_A)
     expect(at(0, 6)).toBe(GRASS_B)
   })
+  it('turns landscape (laptop) screens so the goals are at the left and right', () => {
+    const c = 120, r = 60, l = pitchGrid(c, r)
+    const lat = (x: number, y: number) => l[y * c + x]
+    const x = Math.floor(c / 2)
+    for (let y = 2; y <= r - 3; y++) expect(lat(x, y)).toBe(LINE) // vertical halfway line
+    for (let y = 2; y <= r - 3; y++) { expect(lat(2, y)).toBe(LINE); expect(lat(c - 3, y)).toBe(LINE) } // goal lines
+    expect(lat(x, 0)).not.toBe(LINE)
+  })
+  it('scales the markings with the screen', () => {
+    // Distance from the goal line to the first line inside it (the goal box) along the middle row.
+    const goalBoxDepth = (c: number, r: number) => {
+      const g = pitchGrid(c, r), y = Math.floor(r / 2) - 3
+      for (let x = 3; x < c; x++) if (g[y * c + x] === LINE) return x - 2
+      return 0
+    }
+    expect(goalBoxDepth(300, 120)).toBeGreaterThan(goalBoxDepth(120, 60))
+  })
+  it('keeps every marking on screen for phone and laptop sizes', () => {
+    for (const [c, r] of [[49, 106], [106, 49], [171, 82], [320, 180]]) {
+      const g = pitchGrid(c, r)
+      expect(g.length).toBe(c * r)
+      expect(g.filter((v) => v === LINE).length).toBeGreaterThan(c + r)
+    }
+  })
   it('survives tiny viewports', () => {
     expect(() => pitchGrid(5, 5)).not.toThrow()
   })

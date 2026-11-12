@@ -1,10 +1,12 @@
 import { useEffect, useReducer, useState } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { PLAYERS } from './data/players'
 import { scheduledPlayer } from './data/schedule'
 import { PitchBackground } from './components/PitchBackground'
 import { PlayerCard } from './components/PlayerCard'
 import { GuessBoard } from './components/GuessBoard'
 import { Results } from './components/Results'
+import { trackEvent } from './lib/analytics'
 import { dailyPlayer, gameReducer, gameStatus, isDuplicateGuess, newGame, pickPlayer } from './lib/game'
 import { MAX_M, MIN_M, formatValue, parseGuess } from './lib/scoring'
 import { dateKey } from './lib/seed'
@@ -43,7 +45,9 @@ export default function App() {
   // StrictMode's double effect can't double-count.
   useEffect(() => {
     if (!over) return
-    const next = recordResult(loadStats(), TODAY, status === 'won', guesses.length)
+    const before = loadStats()
+    const next = recordResult(before, TODAY, status === 'won', guesses.length)
+    if (before.lastPlayedDate !== TODAY) trackEvent({ name: 'game_completed', won: status === 'won', guesses: guesses.length })
     saveStats(next)
     setStats(next)
   }, [over, status, guesses.length])
@@ -60,6 +64,7 @@ export default function App() {
     }
     setError(null)
     setText('')
+    if (guesses.length === 0) trackEvent({ name: 'game_started' })
     dispatch({ type: 'guess', value })
   }
 
@@ -74,6 +79,7 @@ export default function App() {
   return (
     <>
     <PitchBackground />
+    <Analytics />
     <main className="app">
       <header>
         <h1>Transfer<span>dle</span></h1>

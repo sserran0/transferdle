@@ -1,6 +1,7 @@
 import { RED_BEYOND_M, TOLERANCE, YELLOW_WITHIN_M, formatValue } from '../lib/scoring'
 import type { Stats } from '../lib/stats'
 import { Modal } from './Modal'
+import { ArrowDown, ArrowUp, AttemptBlock } from './PixelArt'
 import { StatsPanel } from './StatsPanel'
 
 interface DialogProps { open: boolean; onClose: () => void }
@@ -19,12 +20,12 @@ export function HowToPlayDialog({ open, onClose }: DialogProps) {
       </ul>
       <p className="modal-sub">After each guess the box changes colour:</p>
       <ul className="legend">
-        <li><span className="swatch fb-green" />Correct (within {Math.round(TOLERANCE * 100)}%)</li>
-        <li><span className="swatch fb-yellow" />Close: within {formatValue(YELLOW_WITHIN_M)}</li>
-        <li><span className="swatch fb-orange" />Off by {formatValue(YELLOW_WITHIN_M)} to {formatValue(RED_BEYOND_M)}</li>
-        <li><span className="swatch fb-red" />Off by more than {formatValue(RED_BEYOND_M)}</li>
+        <li><AttemptBlock feedback="green" />Correct (within {Math.round(TOLERANCE * 100)}%)</li>
+        <li><AttemptBlock feedback="yellow" />Close: within {formatValue(YELLOW_WITHIN_M)}</li>
+        <li><AttemptBlock feedback="orange" />Off by {formatValue(YELLOW_WITHIN_M)} to {formatValue(RED_BEYOND_M)}</li>
+        <li><AttemptBlock feedback="red" />Off by more than {formatValue(RED_BEYOND_M)}</li>
       </ul>
-      <p>⬆ means the real value is higher. ⬇ means it is lower.</p>
+      <p><ArrowUp scale={1} /> means the real value is higher. <ArrowDown scale={1} /> means it is lower.</p>
       <button type="button" className="primary" onClick={onClose}>Got it</button>
     </Modal>
   )

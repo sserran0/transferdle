@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { Player } from '../types'
 import { MAX_GUESSES } from '../lib/game'
+import { ArrowDown, ArrowUp, Check } from './PixelArt'
 import { MAX_M, MIN_M, direction, feedback, formatValue } from '../lib/scoring'
 
 interface Props {
@@ -34,7 +35,9 @@ export function GuessBoard({ player, guesses, text, error, over, onText, onSubmi
           return (
             <div key={i} className={`cell fb-${fb}`}>
               <input readOnly tabIndex={-1} value={formatValue(g)} aria-label={`Guess ${i + 1}: ${formatValue(g)}. ${hint}`} />
-              <span className={`arrow${fb === 'green' ? ' check' : ''}`} aria-hidden="true">{fb === 'green' ? '\u2714\uFE0E' : d === 'higher' ? '⬆' : '⬇'}</span>
+              <span className="arrow" aria-hidden="true">
+                {fb === 'green' ? <Check /> : d === 'higher' ? <ArrowUp /> : <ArrowDown />}
+              </span>
             </div>
           )
         }

@@ -67,13 +67,11 @@ button.primary:focus-visible, input:focus-visible, .credit a:focus-visible { out
 .cell.fb-green { background:var(--green); } .cell.fb-yellow { background:var(--yellow); }
 .cell.fb-orange { background:var(--orange); } .cell.fb-red { background:var(--red); }
 .arrow { padding:0 1rem; font-size:14px; }
-.arrow.check { font-size:20px; line-height:1; }
 .error { min-height:1.25rem; margin:.25rem 0 0; font-size:8px; line-height:2; color:#ff3b30; text-align:center; text-shadow:-2px -2px 0 var(--ink), 0px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 0px 0 var(--ink), 2px 0px 0 var(--ink), -2px 2px 0 var(--ink), 0px 2px 0 var(--ink), 2px 2px 0 var(--ink); }
 
 .result { background:var(--paper); padding:1.25rem; text-align:center; display:flex; flex-direction:column; gap:1rem; }
 .result h2 { margin:0; font-size:12px; line-height:1.6; }
 .actual { margin:0; font-size:10px; line-height:1.8; } .actual strong { font-size:16px; display:block; }
-.grid { font-size:24px; letter-spacing:.2em; margin:0; }
 .notice { min-height:1.25rem; margin:0; font-size:8px; color:var(--muted); }
 .countdown { margin:0; font-size:8px; color:var(--muted); } .countdown strong { color:var(--ink); font-size:10px; }
 
@@ -117,8 +115,16 @@ footer a:focus-visible { outline:var(--px) solid var(--ink); outline-offset:2px;
 .plain { list-style:none; padding:0; display:flex; flex-direction:column; gap:.5rem; }
 .legend { list-style:none; padding:0; display:flex; flex-direction:column; gap:.5rem; }
 .legend li { display:flex; align-items:center; gap:.75rem; }
-.swatch { flex:none; width:20px; height:20px; border:3px solid var(--ink); }
-.swatch.fb-green { background:var(--green); } .swatch.fb-yellow { background:var(--yellow); }
-.swatch.fb-orange { background:var(--orange); } .swatch.fb-red { background:var(--red); }
 .modal .stats { box-shadow:none; }
 body:has(dialog[open]) { overflow:hidden; }
+
+/* Pixel-art sprites and attempt blocks (src/lib/pixelart.ts). */
+.pixel { display:block; flex:none; }
+.arrow { display:flex; align-items:center; }
+.blocks { display:flex; justify-content:center; gap:6px; }
+.blk-ink { fill:var(--ink); }
+.blk-green { color:var(--green); } .blk-yellow { color:var(--yellow); }
+.blk-orange { color:var(--orange); } .blk-red { color:var(--red); }
+.blk-base { fill:currentColor; }
+.legend .blk { display:block; }
+p svg.pixel { display:inline-block; vertical-align:middle; }

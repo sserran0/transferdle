@@ -119,7 +119,7 @@ export default function App() {
       )}
       <footer>
         <p>Source: <a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a></p>
-        <p className="byline">Made by Santi</p>
+        <p className="byline">© Santi</p>
       </footer>
       <HowToPlayDialog open={panel === 'help'} onClose={closePanel} />
       <AboutDialog open={panel === 'about'} onClose={closePanel} />

@@ -87,3 +87,17 @@ Three dialogs open from the buttons in the header (`src/components/InfoDialogs.t
 - **Stats** shows streaks and the guess chart at any time, separate from the results panel that appears when a game ends. Stats stay in the browser (`localStorage`).
 
 If you change what the game collects, update the privacy text in `AboutDialog`.
+
+## Security headers
+
+`vercel.json` sets `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` and a **Content-Security-Policy**.
+The policy is currently `Content-Security-Policy-Report-Only`: the browser logs anything it *would* block (DevTools console, `[Report Only] ...`) but blocks nothing.
+
+- **Enforce it:** once production shows no violations, rename the key to `Content-Security-Policy`. (`upgrade-insecure-requests` is ignored in report-only mode; it only takes effect once enforced.)
+- **Expected false alarm on Vercel previews:** Vercel's preview toolbar loads from `vercel.live` and will be flagged. It doesn't exist in production.
+- **Keep it in sync, in the same PR as the change:**
+  - a new image host goes in `img-src` (`scripts/csp.test.ts` fails if a photo host in `images.json` isn't allowed)
+  - a backend on another domain goes in `connect-src` (same-domain Vercel functions are covered by `'self'`)
+  - Vercel Analytics runs from our own domain, so `'self'` already covers it
+- **No `data:` assets:** `build.assetsInlineLimit` is `0` in `vite.config.ts`, because Vite would otherwise inline small fonts as `data:` URIs, which `font-src 'self'` rejects.
+- **No inline styles or scripts:** keep CSS in files and don't add inline `<script>` tags. Styles set from React's `style` prop are fine.

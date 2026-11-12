@@ -4,6 +4,11 @@ import { siteUrl } from './scripts/site-url.ts'
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    // Never inline assets as data: URIs. Vite would otherwise inline the small font
+    // subsets, which the Content-Security-Policy (font-src 'self') does not allow.
+    assetsInlineLimit: 0,
+  },
   plugins: [
     react(),
     {

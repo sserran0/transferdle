@@ -6,12 +6,14 @@ import { PitchBackground } from './components/PitchBackground'
 import { PlayerCard } from './components/PlayerCard'
 import { GuessBoard } from './components/GuessBoard'
 import { Results } from './components/Results'
+import { AboutDialog, HowToPlayDialog, StatsDialog } from './components/InfoDialogs'
 import { trackEvent } from './lib/analytics'
+import { shouldShowHelp } from './lib/help'
 import { dailyPlayer, gameReducer, gameStatus, isDuplicateGuess, newGame, pickPlayer } from './lib/game'
 import { MAX_M, MIN_M, formatValue, parseGuess } from './lib/scoring'
 import { dateKey } from './lib/seed'
 import { recordResult } from './lib/stats'
-import { loadGuesses, loadStats, saveGuesses, saveStats } from './lib/storage'
+import { loadGuesses, loadSeenHelp, loadStats, saveGuesses, saveSeenHelp, saveStats } from './lib/storage'
 
 // Fixed for the life of the page. A tab left open overnight shows yesterday's
 // puzzle until reloaded. In dev only, ?date=YYYY-MM-DD overrides it so you can
@@ -28,10 +30,16 @@ function todaysPlayer() {
   return dailyPlayer(PLAYERS, TODAY)
 }
 
+type Panel = 'help' | 'stats' | 'about' | null
+
 export default function App() {
   const [game, dispatch] = useReducer(gameReducer, undefined, () =>
     newGame(todaysPlayer(), loadGuesses(TODAY)))
   const [stats, setStats] = useState(loadStats)
+  // First-time visitors see "How to play" automatically; afterwards it is behind the "?" button.
+  const [panel, setPanel] = useState<Panel>(() =>
+    shouldShowHelp(loadSeenHelp(), loadStats(), loadGuesses(TODAY)) ? 'help' : null)
+  const closePanel = () => setPanel(null)
   const [text, setText] = useState('')
   const [error, setError] = useState<string | null>(null)
 
@@ -40,6 +48,7 @@ export default function App() {
   const over = status !== 'playing'
 
   useEffect(() => { saveGuesses(TODAY, guesses) }, [guesses])
+  useEffect(() => { if (panel === 'help') saveSeenHelp() }, [panel])
 
   // recordResult ignores a date it has already recorded, so refreshes and
   // StrictMode's double effect can't double-count.
@@ -82,6 +91,17 @@ export default function App() {
     <Analytics />
     <main className="app">
       <header>
+        <div className="hb hb-left">
+          <button type="button" className="icon-btn" aria-label="How to play" onClick={() => setPanel('help')}>?</button>
+          <button type="button" className="icon-btn" aria-label="About, credits and privacy" onClick={() => setPanel('about')}>i</button>
+        </div>
+        <div className="hb hb-right">
+          <button type="button" className="icon-btn" aria-label="Your stats" onClick={() => setPanel('stats')}>
+            <svg width="14" height="14" viewBox="0 0 7 7" shapeRendering="crispEdges" fill="currentColor" aria-hidden="true" focusable="false">
+              <rect x="0" y="4" width="2" height="3" /><rect x="2.5" y="1" width="2" height="6" /><rect x="5" y="3" width="2" height="4" />
+            </svg>
+          </button>
+        </div>
         <h1>Transfer<span>dle</span></h1>
         <p>Daily Puzzle · {TODAY}</p>
       </header>
@@ -98,12 +118,15 @@ export default function App() {
         <button type="button" className="dev" onClick={devReplay}>Dev: replay with random player</button>
       )}
       <footer>
-<<<<<<< Updated upstream
         <a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a> (CC0)
-=======
         Source:<a href="https://github.com/dcaribou/transfermarkt-datasets" target="_blank" rel="noreferrer noopener">transfermarkt-datasets</a>
->>>>>>> Stashed changes
       </footer>
+      <HowToPlayDialog open={panel === 'help'} onClose={closePanel} />
+      <AboutDialog open={panel === 'about'} onClose={closePanel} />
+      <StatsDialog
+        open={panel === 'stats'} onClose={closePanel} stats={stats}
+        today={over ? { guesses: guesses.length, won: status === 'won' } : undefined}
+      />
     </main>
     </>
   )

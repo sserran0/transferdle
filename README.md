@@ -1,6 +1,6 @@
 # Transferdle
 
-A daily football game: guess a player's Transfermarkt market value in €M within 5 guesses.
+A daily football game: guess a player's estimated market value (source: [transfermarkt-datasets](https://github.com/dcaribou/transfermarkt-datasets)) in €M within 5 guesses.
 Each guess turns green, yellow, orange or red with a ⬆/⬇ hint. Everyone gets the same player each day.
 
 ```sh
@@ -77,3 +77,13 @@ Three custom events (`src/lib/analytics.ts`) measure engagement, and may need a 
 | `share_clicked` | Share button pressed | none |
 
 Properties are deliberately coarse: never send the player, the value, the date or what was typed.
+
+## Info dialogs
+
+Three dialogs open from the buttons in the header (`src/components/InfoDialogs.tsx`, built on the native `<dialog>` in `Modal.tsx`, so Esc, focus trapping and screen readers work without extra code):
+
+- **? How to play** opens by itself on a first visit, then only from the button. Players who already have stats or saved guesses never get it forced on them (`src/lib/help.ts`). The colour rules shown come from the same constants the game uses (`src/lib/scoring.ts`), so they can't drift.
+- **i About** covers the fan-project disclaimer (not affiliated with Transfermarkt or any club), the data source, photo credits and the privacy note.
+- **Stats** shows streaks and the guess chart at any time, separate from the results panel that appears when a game ends. Stats stay in the browser (`localStorage`).
+
+If you change what the game collects, update the privacy text in `AboutDialog`.

@@ -3,6 +3,7 @@ import { emptyStats, type Stats } from './stats'
 
 const GAME_KEY = 'transferdle:v2:game'
 const STATS_KEY = 'transferdle:v2:stats'
+const HELP_KEY = 'transferdle:v2:seen-help'
 
 function read(key: string): unknown {
   try {
@@ -48,4 +49,12 @@ export function loadStats(): Stats {
 
 export function saveStats(s: Stats) {
   write(STATS_KEY, s)
+}
+
+export function loadSeenHelp(): boolean {
+  return read(HELP_KEY) === true
+}
+
+export function saveSeenHelp() {
+  write(HELP_KEY, true)
 }

@@ -9,6 +9,28 @@
     <meta name="color-scheme" content="only light" />
     <meta name="theme-color" content="#6ab84c" />
     <title>Transferdle</title>
+
+    <!-- Share previews. Static on purpose: never put the day's player, value or date here (spoilers).
+         __SITE_URL__ is replaced at build time (see vite.config.ts) because these URLs must be absolute. -->
+    <meta name="description" content="Guess a footballer's Transfermarkt market value in five tries, with a new player every day." />
+    <link rel="canonical" href="__SITE_URL__/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Transferdle" />
+    <meta property="og:title" content="Transferdle: guess the player's market value" />
+    <meta property="og:description" content="Guess a footballer's Transfermarkt market value in five tries, with a new player every day." />
+    <meta property="og:url" content="__SITE_URL__/" />
+    <meta property="og:image" content="__SITE_URL__/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Transferdle: an 8-bit football game. Guess the player's market value." />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Transferdle: guess the player's market value" />
+    <meta name="twitter:description" content="Guess a footballer's Transfermarkt market value in five tries, with a new player every day." />
+    <meta name="twitter:image" content="__SITE_URL__/og-image.png" />
+    <meta name="twitter:image:alt" content="Transferdle: an 8-bit football game. Guess the player's market value." />
   </head>
   <body>
     <div id="root"></div>

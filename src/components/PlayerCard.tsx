@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Player } from '../types'
 import { ageOn } from '../lib/age'
+import { statFacts } from '../lib/statfacts'
 
 function initials(name: string) {
   return name.split(' ').map((p) => p[0]).slice(0, 2).join('')
@@ -31,6 +32,9 @@ export function PlayerCard({ player, showName, today }: { player: Player; showNa
         <div><dt>Nationality</dt><dd><span className="flag" aria-hidden="true">{player.nationalityFlag}</span>{player.nationality}</dd></div>
         <div><dt>Club</dt><dd>{player.club}</dd></div>
         <div><dt>League</dt><dd><span className="flag" aria-hidden="true">{player.leagueFlag}</span>{player.league}</dd></div>
+        {statFacts(player.stats).map((f) => (
+          <div key={f.label}><dt>{f.label}</dt><dd aria-label={f.spoken}>{f.value}</dd></div>
+        ))}
       </dl>
       {photo && player.imageCredit && player.imagePageUrl && (
         <p className="credit">

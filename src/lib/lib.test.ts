@@ -7,6 +7,7 @@ import { ageOn } from './age'
 import { GRASS_A, GRASS_B, LINE, pitchGrid } from './pitch'
 import { shouldShowHelp } from './help'
 import { ARROW_DOWN, ARROW_UP, BLOCK, CHECK, pixelPath, pixmapSize } from './pixelart'
+import { shortSeason, statFacts } from './statfacts'
 import { buildShareText } from './share'
 import { emptyStats, recordResult } from './stats'
 
@@ -90,6 +91,25 @@ describe('pixel art', () => {
     expect(pixelPath(['.##', '#..'])).toBe('M1 0h2v1h-2zM0 1h1v1h-1z')
     expect(pixelPath(['...'])).toBe('')
     expect(pixelPath(['ab.a'], 'ab')).toBe('M0 0h2v1h-2zM3 0h1v1h-1z') // several characters count as one shape
+  })
+})
+
+describe('statFacts', () => {
+  it('shows goals/assists for outfield players', () => {
+    expect(statFacts({ season: '2025/26', kind: 'outfield', games: 31, goals: 12, assists: 5 })).toEqual([
+      { label: 'Games (25/26)', value: '31' },
+      { label: 'Goals / assists', value: '12/5', spoken: '12 goals, 5 assists' },
+    ])
+  })
+  it('shows clean sheets instead for goalkeepers', () => {
+    expect(statFacts({ season: '2025/26', kind: 'goalkeeper', games: 38, cleanSheets: 13 })).toEqual([
+      { label: 'Games (25/26)', value: '38' },
+      { label: 'Clean sheets', value: '13' },
+    ])
+  })
+  it('shows nothing when a player has no stats', () => {
+    expect(statFacts(undefined)).toEqual([])
+    expect(shortSeason('2025/26')).toBe('25/26')
   })
 })
 
